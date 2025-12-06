@@ -1,0 +1,15 @@
+name: Segurança - DAST
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  zap-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: OWASP ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.6.0
+        with:
+          target: "https://minha-app-em-producao.exemplo.com"

@@ -1,0 +1,58 @@
+name: CD - Deploy em Produção
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+      url: ${{ steps.deploy.outputs.app-url }}
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build JAR
+        run: ./gradlew clean bootJar --no-daemon
+
+      - name: Upload artefato JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: build/libs/*.jar
+
+      - name: Autenticar na nuvem via OIDC (exemplo AWS)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
+          aws-region: us-east-1
+
+      - name: Deploy (exemplo placeholder)
+        id: deploy
+        run: |
+          echo "Realizando deploy na infraestrutura configurada..."
+          # Aqui entraria o comando real de deploy (ECS, EKS, AppRunner, etc)
+          echo "app-url=https://minha-app-em-producao.exemplo.com" >> $GITHUB_OUTPUT
+
+      - name: Resumo do Deploy
+        run: |
+          echo "## Deploy em Produção 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "- Ambiente: prod" >> $GITHUB_STEP_SUMMARY
+          echo "- URL: ${{ steps.deploy.outputs.app-url }}" >> $GITHUB_STEP_SUMMARY

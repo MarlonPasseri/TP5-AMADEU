@@ -1,0 +1,38 @@
+name: Pós-Deploy - Testes Selenium
+
+on:
+  workflow_run:
+    workflows: [ "CD - Deploy em Produção" ]
+    types:
+      - completed
+
+jobs:
+  selenium-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Instalar Chrome e ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+
+      - name: Rodar testes Selenium (pós-deploy)
+        run: |
+          echo "::group::Iniciando testes Selenium pós-deploy 🌐"
+          ./gradlew seleniumTest --no-daemon -Dapp.baseUrl=${{ github.event.workflow_run.conclusion == 'success' && 'https://minha-app-em-producao.exemplo.com' || 'http://localhost:8080' }}
+          echo "::endgroup::"
+
+      - name: Resumo Pós-Deploy
+        if: always()
+        run: |
+          echo "## Testes Pós-Deploy 🧪" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY

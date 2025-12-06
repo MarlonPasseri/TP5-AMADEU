@@ -1,0 +1,52 @@
+name: CI - Build, Testes e SAST
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build + Testes
+        run: |
+          echo "::group::Iniciando build e testes 🛠️"
+          ./gradlew clean build --no-daemon
+          echo "::endgroup::"
+
+      - name: Publicar relatório Jacoco
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: build/reports/jacoco/test/html
+
+      - name: Inicializar CodeQL (SAST)
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+
+      - name: Rodar análise CodeQL
+        uses: github/codeql-action/analyze@v3
+
+      - name: Resumo em Markdown
+        if: always()
+        run: |
+          echo "## Resultado do CI ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- Branch: $GITHUB_REF" >> $GITHUB_STEP_SUMMARY
+          echo "- Autor: $GITHUB_ACTOR" >> $GITHUB_STEP_SUMMARY
