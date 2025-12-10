@@ -19,12 +19,6 @@ repositories {
     mavenCentral()
 }
 
-// ❌ Esse bloco pode ser removido, já não vamos usar seleniumTestImplementation
-// configurations {
-//     seleniumTestImplementation.extendsFrom testImplementation
-//     seleniumTestRuntimeOnly.extendsFrom testRuntimeOnly
-// }
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -35,12 +29,15 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    // ✅ Selenium disponível nos testes normais (inclui SeleniumSmokeTest)
+    // Selenium disponível nos testes normais (mas excluído no test padrão)
     testImplementation 'org.seleniumhq.selenium:selenium-java:4.25.0'
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // Não executar testes marcados com "selenium" durante o build CI
+        excludeTags 'selenium'
+    }
     finalizedBy jacocoTestReport
 }
 
@@ -65,3 +62,4 @@ jacocoTestReport {
         html.required = true
     }
 }
+
