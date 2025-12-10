@@ -1,8 +1,8 @@
 # TP5 - Sistema Integrado (Entrega Final)
 
-![Build](https://github.com/SEU_USUARIO/SEU_REPO/actions/workflows/build.yml/badge.svg)
-![Deploy](https://github.com/SEU_USUARIO/SEU_REPO/actions/workflows/deploy.yml/badge.svg)
-![Security](https://github.com/SEU_USUARIO/SEU_REPO/actions/workflows/security.yml/badge.svg)
+![Build](https://github.com/MarlonPasseri/TP5-AMADEU/actions/workflows/build.yml/badge.svg)
+![Deploy](https://github.com/MarlonPasseri/TP5-AMADEU/actions/workflows/deploy.yml/badge.svg)
+![Security](https://github.com/MarlonPasseri/TP5-AMADEU/actions/workflows/security.yml/badge.svg)
 
 ## Visão Geral
 
