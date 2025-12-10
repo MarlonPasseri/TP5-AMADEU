@@ -8,6 +8,7 @@ plugins {
 group = 'com.example'
 version = '1.0.0'
 description = 'TP5 - Sistema Integrado com CI/CD completo'
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -18,10 +19,11 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    seleniumTestImplementation.extendsFrom testImplementation
-    seleniumTestRuntimeOnly.extendsFrom testRuntimeOnly
-}
+// ❌ Esse bloco pode ser removido, já não vamos usar seleniumTestImplementation
+// configurations {
+//     seleniumTestImplementation.extendsFrom testImplementation
+//     seleniumTestRuntimeOnly.extendsFrom testRuntimeOnly
+// }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -33,8 +35,8 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    // Selenium para testes pós-deploy
-    seleniumTestImplementation 'org.seleniumhq.selenium:selenium-java:4.25.0'
+    // ✅ Selenium disponível nos testes normais (inclui SeleniumSmokeTest)
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.25.0'
 }
 
 test {
@@ -45,11 +47,14 @@ test {
 tasks.register('seleniumTest', Test) {
     description = 'Roda os testes de interface Selenium (pós-deploy)'
     group = 'verification'
+
     useJUnitPlatform {
         includeTags 'selenium'
     }
+
     testClassesDirs = sourceSets.test.output.classesDirs
     classpath = sourceSets.test.runtimeClasspath
+
     systemProperty 'app.baseUrl', System.getProperty('app.baseUrl', 'http://localhost:8080')
 }
 
