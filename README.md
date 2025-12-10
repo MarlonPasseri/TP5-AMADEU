@@ -39,14 +39,6 @@ Acesse:
 ./gradlew seleniumTest   # testes Selenium (requer ChromeDriver)
 ```
 
-## CI/CD
-
-1. Faça push deste projeto para um repositório no GitHub.
-2. Ajuste:
-   - `SEU_USUARIO/SEU_REPO` nas URLs de badges
-   - URL real de produção nos arquivos `deploy.yml` e `security.yml`
-   - Segredo `AWS_DEPLOY_ROLE` (ou equivalente, dependendo da nuvem escolhida)
-
 Os workflows serão disparados automaticamente em:
 
 - `push` / `pull_request` → `build.yml`
